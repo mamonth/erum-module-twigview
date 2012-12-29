@@ -42,15 +42,22 @@ class TwigView extends \Erum\ModuleAbstract
      */
     public function __construct( array $config )
     {
-        require_once dirname( __DIR__ ) . '/external/Twig/Autoloader.php';
+        require_once dirname( __DIR__ ) . '/external/Twig/lib/Twig/Autoloader.php';
         Twig_Autoloader::register();
 
         $appCfg = Erum::instance()->config();
         
         $this->loader = new Twig_Loader_Filesystem( $appCfg->application->root . '/templates' );
+
+        $tmpDir = $appCfg->application->root . '/tmp';
+
+        if( !file_exists( $tmpDir ) )
+        {
+            mkdir( $tmpDir );
+        }
         
         $this->environment = new Twig_Environment( $this->loader, array(
-            'cache' => $appCfg->application->root . '/tmp',
+            'cache' => $tmpDir,
             'debug' => $appCfg->application->debug,
             'strict_variables' => $appCfg->application->debug ? true : false,
             'optimizations' => -1,
