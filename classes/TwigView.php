@@ -5,7 +5,7 @@
  * 
  * @author Andrew Tereshko <andrew.tereshko@gmail.com>
  */
-class TwigView extends \Erum\ModuleAbstract
+class TwigView extends \Erum\ModuleAbstract implements \Erum\ViewInterface
 {
     /**
      *
@@ -24,14 +24,23 @@ class TwigView extends \Erum\ModuleAbstract
      * @var Twig_TemplateInterface
      */
     protected $template;
-    
+
+    /**
+     * Module bootstrap method
+     */
+    public static function init()
+    {
+        require_once dirname( __DIR__ ) . '/external/Twig/lib/Twig/Autoloader.php';
+        Twig_Autoloader::register();
+    }
+
     /**
      *
      * @param type $configAlias
      * @return \TwigView 
      */
     public static function factory( $configAlias = 'default' )
-    {        
+    {
         return new self( Erum\ModuleDirector::getModuleConfig( parent::getAlias(), $configAlias )  );
     }
     
@@ -42,22 +51,17 @@ class TwigView extends \Erum\ModuleAbstract
      */
     public function __construct( array $config )
     {
-        require_once dirname( __DIR__ ) . '/external/Twig/lib/Twig/Autoloader.php';
-        Twig_Autoloader::register();
-
         $appCfg = Erum::instance()->config();
         
-        $this->loader = new Twig_Loader_Filesystem( $appCfg->application->root . '/templates' );
+        $this->loader = new Twig_Loader_Filesystem( $config['templateDirectory'] );
 
-        $tmpDir = $appCfg->application->root . '/tmp';
-
-        if( !file_exists( $tmpDir ) )
+        if( !file_exists( $config['tempDirectory'] ) )
         {
-            mkdir( $tmpDir );
+            mkdir( $config['tempDirectory'] );
         }
         
         $this->environment = new Twig_Environment( $this->loader, array(
-            'cache' => $tmpDir,
+            'cache' => $config['tempDirectory'],
             'debug' => $appCfg->application->debug,
             'strict_variables' => $appCfg->application->debug ? true : false,
             'optimizations' => -1,
