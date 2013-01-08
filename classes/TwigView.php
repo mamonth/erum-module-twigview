@@ -70,6 +70,9 @@ class TwigView extends \Erum\ModuleAbstract implements \Erum\ViewInterface
         // Add HMVC requests support
         $this->environment->addFunction('subRequest', new Twig_Function_Function( 'subRequest', array( 'is_safe' => array('html') ) ) );
 
+        // various filters
+        $this->environment->addFilter( 'gmdate', new Twig_SimpleFilter('gmdate', 'gmdate') );
+
     }
 
     public function setTemplate( $templateName )
