@@ -114,6 +114,11 @@ class TwigView extends \Erum\ModuleAbstract implements \Erum\ViewInterface
     {
         return $this->template->render( $this->variables );
     }
+
+    public function getContentType()
+    {
+        return 'text/html';
+    }
 }
 
 function subRequest( $uri, $method = \Erum\Request::GET )
