@@ -36,12 +36,12 @@ class TwigView extends \Erum\ModuleAbstract implements \Erum\ViewInterface
 
     /**
      *
-     * @param type $configAlias
+     * @param string $configAlias
      * @return \TwigView
      */
     public static function factory( $configAlias = 'default' )
     {
-        return new self( Erum\ModuleDirector::getModuleConfig( parent::getAlias(), $configAlias )  );
+        return new self( Erum\ModuleDirector::getModuleConfig( 'TwigView', $configAlias )  );
     }
 
     /**
@@ -123,5 +123,12 @@ class TwigView extends \Erum\ModuleAbstract implements \Erum\ViewInterface
 
 function subRequest( $uri, $method = \Erum\Request::GET )
 {
-    return \Erum\Request::factory( $uri, $method )->execute()->body;
+    $body = null;
+    try
+    {
+        $body = \Erum\Request::factory( $uri, $method )->execute()->body;
+    }
+    catch( \Exception $e ) {}
+
+    return $body;
 }
